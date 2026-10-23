@@ -1,4 +1,8 @@
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+} from "react";
 
 const CartContext = createContext();
 
@@ -7,29 +11,50 @@ export function CartProvider({ children }) {
 
   const addToCart = (product) => {
     setCartItems((currentItems) => {
-      const existingItem = currentItems.find(
-        (item) => item.id === product.id
-      );
+      const productId =
+        product._id || product.id;
+
+      const existingItem =
+        currentItems.find(
+          (item) =>
+            (item._id || item.id) === productId
+        );
 
       if (existingItem) {
         return currentItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+          (item._id || item.id) === productId
+            ? {
+                ...item,
+                quantity:
+                  item.quantity + 1,
+              }
             : item
         );
       }
 
-      return [...currentItems, { ...product, quantity: 1 }];
+      return [
+        ...currentItems,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ];
     });
   };
 
   const removeFromCart = (productId) => {
     setCartItems((currentItems) =>
-      currentItems.filter((item) => item.id !== productId)
+      currentItems.filter(
+        (item) =>
+          (item._id || item.id) !== productId
+      )
     );
   };
 
-  const updateQuantity = (productId, quantity) => {
+  const updateQuantity = (
+    productId,
+    quantity
+  ) => {
     if (quantity < 1) {
       removeFromCart(productId);
       return;
@@ -37,15 +62,19 @@ export function CartProvider({ children }) {
 
     setCartItems((currentItems) =>
       currentItems.map((item) =>
-        item.id === productId
-          ? { ...item, quantity }
+        (item._id || item.id) === productId
+          ? {
+              ...item,
+              quantity,
+            }
           : item
       )
     );
   };
 
   const cartCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
+    (total, item) =>
+      total + item.quantity,
     0
   );
 
@@ -68,3 +97,5 @@ export function CartProvider({ children }) {
 export function useCart() {
   return useContext(CartContext);
 }
+
+export default CartContext;

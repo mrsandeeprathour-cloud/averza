@@ -6,15 +6,38 @@ import {
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+const getStoredUser = () => {
+  try {
+    const storedUser = localStorage.getItem("averza_user");
 
-  const login = (userData) => {
+    return storedUser
+      ? JSON.parse(storedUser)
+      : null;
+  } catch {
+    localStorage.removeItem("averza_user");
+    return null;
+  }
+};
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(getStoredUser);
+
+  const login = (userData, token) => {
     setUser(userData);
+
+    localStorage.setItem(
+      "averza_user",
+      JSON.stringify(userData)
+    );
+
+    localStorage.setItem("averza_token", token);
   };
 
   const logout = () => {
     setUser(null);
+
+    localStorage.removeItem("averza_user");
+    localStorage.removeItem("averza_token");
   };
 
   const isAuthenticated = Boolean(user);

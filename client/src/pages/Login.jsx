@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+
 import { useAuth } from "../context/AuthContext";
+import api from "../services/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -12,6 +14,8 @@ function Login() {
   });
 
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -26,6 +30,8 @@ function Login() {
       ...currentErrors,
       [name]: "",
     }));
+
+    setServerError("");
   };
 
   const validateForm = () => {
@@ -54,23 +60,39 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setServerError("");
 
     if (!validateForm()) {
       return;
     }
 
-    const userData = {
-      id: Date.now(),
-      firstName: "Averza",
-      lastName: "Customer",
-      email: formData.email.trim().toLowerCase(),
-    };
+    try {
+      setIsLoading(true);
 
-    login(userData);
+      const response = await api.post("/auth/login", {
+        email: formData.email.trim(),
+        password: formData.password,
+      });
 
-    navigate("/");
+      if (response.data.success) {
+        login(
+          response.data.user,
+          response.data.token
+        );
+
+        navigate("/");
+      }
+    } catch (error) {
+      setServerError(
+        error.response?.data?.message ||
+          "Unable to login. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -83,6 +105,12 @@ function Login() {
 
           <span>Login to your Averza account</span>
         </div>
+
+        {serverError && (
+          <p className="server-error">
+            {serverError}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -115,7 +143,11 @@ function Login() {
             <div className="password-input-wrapper">
               <input
                 id="login-password"
-                type={showPassword ? "text" : "password"}
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 name="password"
                 placeholder="Enter your password"
                 value={formData.password}
@@ -127,7 +159,9 @@ function Login() {
                 type="button"
                 className="password-toggle"
                 onClick={() =>
-                  setShowPassword((current) => !current)
+                  setShowPassword(
+                    (current) => !current
+                  )
                 }
               >
                 {showPassword ? "Hide" : "Show"}
@@ -141,14 +175,22 @@ function Login() {
             )}
           </div>
 
-          <button type="submit" className="auth-btn">
-            Login
+          <button
+            type="submit"
+            className="auth-btn"
+            disabled={isLoading}
+          >
+            {isLoading
+              ? "Logging in..."
+              : "Login"}
           </button>
         </form>
 
         <p className="auth-switch">
           Don't have an account?{" "}
-          <Link to="/register">Create Account</Link>
+          <Link to="/register">
+            Create Account
+          </Link>
         </p>
       </div>
     </main>

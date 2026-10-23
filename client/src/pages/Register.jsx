@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+
+import api from "../services/api";
 
 function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -16,7 +16,12 @@ function Register() {
   });
 
   const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
   const [showConfirmPassword, setShowConfirmPassword] =
     useState(false);
 
@@ -32,17 +37,21 @@ function Register() {
       ...currentErrors,
       [name]: "",
     }));
+
+    setServerError("");
   };
 
   const validateForm = () => {
     const newErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
+      newErrors.firstName =
+        "First name is required";
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+      newErrors.lastName =
+        "Last name is required";
     }
 
     if (!formData.email.trim()) {
@@ -52,18 +61,25 @@ function Register() {
         formData.email.trim()
       )
     ) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email =
+        "Please enter a valid email address";
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^[6-9]\d{9}$/.test(formData.phone.trim())) {
+      newErrors.phone =
+        "Phone number is required";
+    } else if (
+      !/^[6-9]\d{9}$/.test(
+        formData.phone.trim()
+      )
+    ) {
       newErrors.phone =
         "Please enter a valid 10-digit Indian phone number";
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password =
+        "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password =
         "Password must be at least 6 characters";
@@ -73,7 +89,8 @@ function Register() {
       newErrors.confirmPassword =
         "Please confirm your password";
     } else if (
-      formData.password !== formData.confirmPassword
+      formData.password !==
+      formData.confirmPassword
     ) {
       newErrors.confirmPassword =
         "Passwords do not match";
@@ -84,24 +101,49 @@ function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setServerError("");
 
     if (!validateForm()) {
       return;
     }
 
-    const userData = {
-      id: Date.now(),
-      firstName: formData.firstName.trim(),
-      lastName: formData.lastName.trim(),
-      email: formData.email.trim().toLowerCase(),
-      phone: formData.phone.trim(),
-    };
+    try {
+      setIsLoading(true);
 
-    login(userData);
+      const response = await api.post(
+        "/auth/register",
+        {
+          firstName:
+            formData.firstName.trim(),
 
-    navigate("/");
+          lastName:
+            formData.lastName.trim(),
+
+          email:
+            formData.email.trim(),
+
+          phone:
+            formData.phone.trim(),
+
+          password:
+            formData.password,
+        }
+      );
+
+      if (response.data.success) {
+        navigate("/login");
+      }
+    } catch (error) {
+      setServerError(
+        error.response?.data?.message ||
+          "Unable to create account. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -116,6 +158,12 @@ function Register() {
             Create your account and start shopping
           </span>
         </div>
+
+        {serverError && (
+          <p className="server-error">
+            {serverError}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-row">
@@ -218,7 +266,11 @@ function Register() {
             <div className="password-input-wrapper">
               <input
                 id="register-password"
-                type={showPassword ? "text" : "password"}
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 name="password"
                 placeholder="Create a password"
                 value={formData.password}
@@ -230,10 +282,14 @@ function Register() {
                 type="button"
                 className="password-toggle"
                 onClick={() =>
-                  setShowPassword((current) => !current)
+                  setShowPassword(
+                    (current) => !current
+                  )
                 }
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword
+                  ? "Hide"
+                  : "Show"}
               </button>
             </div>
 
@@ -259,7 +315,9 @@ function Register() {
                 }
                 name="confirmPassword"
                 placeholder="Confirm your password"
-                value={formData.confirmPassword}
+                value={
+                  formData.confirmPassword
+                }
                 onChange={handleChange}
                 autoComplete="new-password"
               />
@@ -273,7 +331,9 @@ function Register() {
                   )
                 }
               >
-                {showConfirmPassword ? "Hide" : "Show"}
+                {showConfirmPassword
+                  ? "Hide"
+                  : "Show"}
               </button>
             </div>
 
@@ -284,14 +344,22 @@ function Register() {
             )}
           </div>
 
-          <button type="submit" className="auth-btn">
-            Create Account
+          <button
+            type="submit"
+            className="auth-btn"
+            disabled={isLoading}
+          >
+            {isLoading
+              ? "Creating Account..."
+              : "Create Account"}
           </button>
         </form>
 
         <p className="auth-switch">
           Already have an account?{" "}
-          <Link to="/login">Login</Link>
+          <Link to="/login">
+            Login
+          </Link>
         </p>
       </div>
     </main>
