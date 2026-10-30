@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import OrderDetails from "./pages/OrderDetails";
 
 function App() {
   return (
@@ -53,6 +54,11 @@ function App() {
         <Route
           path="/orders"
           element={<Orders />}
+        />
+
+        <Route
+          path="/orders/:id"
+          element={<OrderDetails />}
         />
       </Routes>
     </MainLayout>

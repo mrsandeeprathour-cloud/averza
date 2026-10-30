@@ -51,12 +51,18 @@ function Orders() {
     fetchOrders();
   }, [isAuthenticated, user?.id]);
 
+  // =========================
+  // NOT LOGGED IN
+  // =========================
+
   if (!isAuthenticated) {
     return (
       <main className="orders-page">
         <div className="orders-header">
           <p>AVERZA</p>
+
           <h1>My Orders</h1>
+
           <span>
             View and track your orders
           </span>
@@ -80,37 +86,53 @@ function Orders() {
     );
   }
 
+  // =========================
+  // LOADING
+  // =========================
+
   if (isLoading) {
     return (
       <main className="orders-page">
         <div className="orders-header">
           <p>AVERZA</p>
+
           <h1>My Orders</h1>
+
           <span>
             View and track your orders
           </span>
         </div>
 
         <div className="orders-status">
-          <p>Loading your orders...</p>
+          <p>
+            Loading your orders...
+          </p>
         </div>
       </main>
     );
   }
+
+  // =========================
+  // ERROR
+  // =========================
 
   if (error) {
     return (
       <main className="orders-page">
         <div className="orders-header">
           <p>AVERZA</p>
+
           <h1>My Orders</h1>
+
           <span>
             View and track your orders
           </span>
         </div>
 
         <div className="orders-status orders-error">
-          <h2>Something went wrong</h2>
+          <h2>
+            Something went wrong
+          </h2>
 
           <p>{error}</p>
 
@@ -127,19 +149,27 @@ function Orders() {
     );
   }
 
+  // =========================
+  // NO ORDERS
+  // =========================
+
   if (orders.length === 0) {
     return (
       <main className="orders-page">
         <div className="orders-header">
           <p>AVERZA</p>
+
           <h1>My Orders</h1>
+
           <span>
             View and track your orders
           </span>
         </div>
 
         <div className="orders-status">
-          <h2>No Orders Yet</h2>
+          <h2>
+            No Orders Yet
+          </h2>
 
           <p>
             You haven't placed any orders yet.
@@ -155,6 +185,10 @@ function Orders() {
       </main>
     );
   }
+
+  // =========================
+  // ORDERS
+  // =========================
 
   return (
     <main className="orders-page">
@@ -174,6 +208,8 @@ function Orders() {
             className="order-card"
             key={order._id}
           >
+            {/* ORDER HEADER */}
+
             <div className="order-card-header">
               <div>
                 <span className="order-label">
@@ -204,6 +240,8 @@ function Orders() {
                 </strong>
               </div>
             </div>
+
+            {/* ORDER STATUS */}
 
             <div className="order-status-row">
               <div>
@@ -241,6 +279,8 @@ function Orders() {
                 </strong>
               </div>
             </div>
+
+            {/* ORDER ITEMS */}
 
             <div className="order-items">
               {order.items.map(
@@ -289,6 +329,8 @@ function Orders() {
               )}
             </div>
 
+            {/* ORDER TOTALS */}
+
             <div className="order-card-footer">
               <div className="order-total-row">
                 <span>
@@ -328,6 +370,15 @@ function Orders() {
                   )}
                 </strong>
               </div>
+
+              {/* VIEW DETAILS */}
+
+              <Link
+                to={`/orders/${order._id}`}
+                className="view-order-btn"
+              >
+                View Order Details
+              </Link>
             </div>
           </article>
         ))}
