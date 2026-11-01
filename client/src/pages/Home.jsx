@@ -40,6 +40,7 @@ function Home() {
     <main className="home-page">
 
       {/* ================= HERO ================= */}
+
       <section className="home-hero">
         <div className="home-hero-content">
 
@@ -57,6 +58,7 @@ function Home() {
           </p>
 
           {/* Search */}
+
           <form className="home-search" onSubmit={handleSearch}>
             <Search size={20} />
 
@@ -73,6 +75,7 @@ function Home() {
           </form>
 
           <div className="home-hero-buttons">
+
             <button
               type="button"
               className="home-primary-btn"
@@ -89,11 +92,13 @@ function Home() {
             >
               Explore Electronics
             </button>
+
           </div>
 
         </div>
 
         {/* ================= HERO PRODUCT ================= */}
+
         <div className="home-hero-card">
 
           <span className="home-hero-badge">
@@ -120,7 +125,11 @@ function Home() {
 
             <button
               type="button"
-              onClick={() => navigate("/products/3")}
+              onClick={() =>
+                navigate(
+                  "/products/6adab0115fb7aa3b6763563f"
+                )
+              }
             >
               <ArrowRight size={20} />
             </button>
@@ -131,6 +140,7 @@ function Home() {
 
 
       {/* ================= FEATURES ================= */}
+
       <section className="home-features">
 
         <div className="home-feature">
@@ -170,6 +180,7 @@ function Home() {
 
 
       {/* ================= FEATURED PRODUCTS ================= */}
+
       <section className="home-section">
 
         <div className="home-section-header">
@@ -252,6 +263,7 @@ function Home() {
                   <div className="home-product-bottom">
 
                     <div className="home-product-price">
+
                       <strong>
                         ₹{product.price.toLocaleString("en-IN")}
                       </strong>
@@ -259,6 +271,7 @@ function Home() {
                       <del>
                         ₹{product.oldPrice.toLocaleString("en-IN")}
                       </del>
+
                     </div>
 
                     <button
@@ -293,6 +306,7 @@ function Home() {
 
 
       {/* ================= CATEGORIES ================= */}
+
       <section className="home-categories-section">
 
         <div className="home-section-header">
@@ -378,6 +392,7 @@ function Home() {
 
 
       {/* ================= WHY AVERZA ================= */}
+
       <section className="home-why">
 
         <div className="home-why-content">
@@ -451,6 +466,7 @@ function Home() {
 
 
       {/* ================= CTA ================= */}
+
       <section className="home-cta">
 
         <p className="home-tag">

@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -6,6 +7,7 @@ import api from "../services/api";
 
 function Login() {
   const navigate = useNavigate();
+
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -49,7 +51,8 @@ function Login() {
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password =
+        "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password =
         "Password must be at least 6 characters";
@@ -72,18 +75,27 @@ function Login() {
     try {
       setIsLoading(true);
 
-      const response = await api.post("/auth/login", {
-        email: formData.email.trim(),
-        password: formData.password,
-      });
+      const response = await api.post(
+        "/auth/login",
+        {
+          email: formData.email.trim(),
+          password: formData.password,
+        }
+      );
 
       if (response.data.success) {
+        const loggedInUser = response.data.user;
+
         login(
-          response.data.user,
+          loggedInUser,
           response.data.token
         );
 
-        navigate("/");
+        if (loggedInUser?.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       setServerError(
@@ -103,7 +115,9 @@ function Login() {
 
           <h1>Welcome Back</h1>
 
-          <span>Login to your Averza account</span>
+          <span>
+            Login to your Averza account
+          </span>
         </div>
 
         {serverError && (

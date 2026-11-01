@@ -1,3 +1,4 @@
+
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -43,7 +44,10 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(
+      password,
+      10
+    );
 
     const user = await User.create({
       firstName: firstName.trim(),
@@ -62,6 +66,7 @@ router.post("/register", async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -103,10 +108,11 @@ router.post("/login", async (req, res) => {
     }
 
     // Compare password
-    const isPasswordCorrect = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isPasswordCorrect =
+      await bcrypt.compare(
+        password,
+        user.password
+      );
 
     if (!isPasswordCorrect) {
       return res.status(401).json({
@@ -128,6 +134,7 @@ router.post("/login", async (req, res) => {
       {
         userId: user._id.toString(),
         email: user.email,
+        role: user.role,
       },
       process.env.JWT_SECRET,
       {
@@ -146,6 +153,7 @@ router.post("/login", async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
+        role: user.role,
       },
     });
   } catch (error) {

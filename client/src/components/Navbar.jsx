@@ -1,9 +1,11 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import {
   ShoppingCart,
   User,
   LogOut,
   Package,
+  ShieldCheck,
 } from "lucide-react";
 
 import { useCart } from "../context/CartContext";
@@ -28,7 +30,6 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-
         <Link
           to="/"
           className="logo"
@@ -37,7 +38,6 @@ function Navbar() {
         </Link>
 
         <div className="nav-links">
-
           <Link to="/">
             Home
           </Link>
@@ -70,11 +70,24 @@ function Navbar() {
                 </span>
               </Link>
 
+              {user?.role === "admin" && (
+                <Link
+                  to="/admin"
+                  className="admin-nav-link"
+                >
+                  <ShieldCheck size={18} />
+
+                  <span>
+                    Admin Panel
+                  </span>
+                </Link>
+              )}
+
               <span className="nav-user">
                 <User size={18} />
 
                 <span>
-                  Hi, {user.firstName}
+                  Hi, {user?.firstName || "User"}
                 </span>
               </span>
 
@@ -102,7 +115,6 @@ function Navbar() {
               </span>
             </Link>
           )}
-
         </div>
       </div>
     </nav>
