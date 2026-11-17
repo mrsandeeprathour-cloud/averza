@@ -5138,6 +5138,74 @@ a {
   }
 }
 
+.cart-toast {
+  position: fixed;
+  top: 90px;
+  right: 25px;
+
+  z-index: 9999;
+
+  min-width: 250px;
+  max-width: 320px;
+
+  padding: 14px 18px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  background: #111827;
+  color: #ffffff;
+
+  border-radius: 10px;
+
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.2);
+
+  animation: cartToastIn 0.25s ease-out;
+}
+
+.cart-toast strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cart-toast span {
+  color: #d1d5db;
+  font-size: 12px;
+  line-height: 1.4;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes cartToastIn {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* Mobile */
+@media (max-width: 480px) {
+  .cart-toast {
+    top: 80px;
+    left: 15px;
+    right: 15px;
+
+    min-width: 0;
+    max-width: none;
+
+    padding: 13px 15px;
+  }
+}
+
 
 /* =========================================================
    END OF AVERZA INDEX CSS
